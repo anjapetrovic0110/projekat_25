@@ -1,6 +1,9 @@
 {
   "resources": {
     "models": {
+      "statue": {
+        "path": "statue/google poly vang.obj"
+      }
     }
   },
   "window": {
