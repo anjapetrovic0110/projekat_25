@@ -39,8 +39,8 @@ void MainController::draw_statue() {
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(2.5f, -6.0f, -60.0f));
-    model = glm::scale(model, glm::vec3(0.02f));
+    model = glm::translate(model, glm::vec3(0.0f, -0.65f, -6.0f));
+    model = glm::scale(model, glm::vec3(0.001f));
     shader->set_mat4("model", model);
 
     statue->draw(shader);
