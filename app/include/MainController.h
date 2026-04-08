@@ -14,7 +14,8 @@ class MainController : public engine::core::Controller {
     void draw() override;
     void begin_draw() override;
     void end_draw() override;
-    void draw_painting();
+    void draw_statue();
+    void draw_hall();
 
 public:
     std::string_view name() const override {

@@ -25,10 +25,11 @@ bool MainController::loop() {
 }
 
 void MainController::draw() {
-    draw_painting();
+    draw_statue();
+    draw_hall();
 }
 
-void MainController::draw_painting() {
+void MainController::draw_statue() {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     engine::resources::Model *statue = resources->model("statue");
@@ -38,11 +39,28 @@ void MainController::draw_painting() {
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -15.0f, -50.0f));
-    model = glm::scale(model, glm::vec3(0.05));
+    model = glm::translate(model, glm::vec3(2.5f, -6.0f, -60.0f));
+    model = glm::scale(model, glm::vec3(0.02f));
     shader->set_mat4("model", model);
 
     statue->draw(shader);
+}
+
+void MainController::draw_hall() {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+    engine::resources::Model *hall = resources->model("hall");
+    engine::resources::Shader *shader = resources->shader("basic");
+
+    shader->use();
+    shader->set_mat4("projection", graphics->projection_matrix());
+    shader->set_mat4("view", graphics->camera()->view_matrix());
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -1.0f, -6.0f));
+    model = glm::scale(model, glm::vec3(0.3f));
+    shader->set_mat4("model", model);
+
+    hall->draw(shader);
 }
 
 void MainController::begin_draw() {

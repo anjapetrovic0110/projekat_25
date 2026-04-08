@@ -3,6 +3,9 @@
     "models": {
       "statue": {
         "path": "statue/google poly vang.obj"
+      },
+      "hall": {
+        "path": "hall/hall.gltf"
       }
     }
   },
