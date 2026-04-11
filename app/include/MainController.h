@@ -7,6 +7,9 @@
 #include "engine/core/Controller.hpp"
 #include "glm/vec3.hpp"
 
+namespace engine::resources {
+class Shader;
+}
 namespace app {
 
 class MainController : public engine::core::Controller {
@@ -20,7 +23,7 @@ class MainController : public engine::core::Controller {
     void draw_statue();
     void draw_hall();
     void draw_torch(glm::vec3 position);
-
+    void setupLights(engine::resources::Shader *shader);
 
 public:
     std::string_view name() const override {

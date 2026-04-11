@@ -24,6 +24,27 @@ bool MainController::loop() {
     return true;
 }
 
+void MainController::setupLights(engine::resources::Shader *shader) {
+    glm::vec3 positions[3] = {
+            glm::vec3(1.0f, -0.7f, -6.0f),
+            glm::vec3(-1.0f, -0.7f, -6.0f),
+            glm::vec3(0.0f, -0.7f, -7.0f)};
+
+    for (int i = 0; i < 3; i++) {
+        std::string base = "pointLights[" + std::to_string(i) + "].";
+
+        shader->set_vec3(base + "position", positions[i]);
+
+        shader->set_vec3(base + "ambient", glm::vec3(0.02f, 0.01f, 0.005f));
+        shader->set_vec3(base + "diffuse", glm::vec3(0.8f, 0.35f, 0.1f));
+        shader->set_vec3(base + "specular", glm::vec3(0.1f));
+
+        shader->set_float(base + "constant", 1.0f);
+        shader->set_float(base + "linear", 0.09f);
+        shader->set_float(base + "quadratic", 0.032f);
+    }
+}
+
 void MainController::draw() {
     draw_statue();
     draw_hall();
@@ -85,6 +106,7 @@ void MainController::draw_torch(glm::vec3 position) {
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     shader->set_vec3("viewPos", graphics->camera()->Position);
+    setupLights(shader);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
