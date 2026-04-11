@@ -41,6 +41,13 @@ void MainController::draw_statue() {
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
+    shader->set_vec3("viewPos", graphics->camera()->Position);
+
+    shader->set_vec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+    shader->set_vec3("dirLight.ambient", glm::vec3(0.4f));
+    shader->set_vec3("dirLight.diffuse", glm::vec3(0.3f));
+    shader->set_vec3("dirLight.specular", glm::vec3(0.4f));
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -0.65f, -6.0f));
     model = glm::scale(model, glm::vec3(0.001f));
@@ -58,6 +65,8 @@ void MainController::draw_hall() {
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
+    shader->set_vec3("viewPos", graphics->camera()->Position);
+
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -1.0f, -6.0f));
     model = glm::scale(model, glm::vec3(0.3f));
@@ -75,8 +84,9 @@ void MainController::draw_torch(glm::vec3 position) {
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
+    shader->set_vec3("viewPos", graphics->camera()->Position);
+
     glm::mat4 model = glm::mat4(1.0f);
-    // model = glm::translate(model, glm::vec3(1.0f, -0.65f, -6.0f));
     model = glm::translate(model, position);
     model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     model = glm::scale(model, glm::vec3(0.4f));
