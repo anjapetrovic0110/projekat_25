@@ -6,6 +6,9 @@
       },
       "hall": {
         "path": "hall/hall.gltf"
+      },
+      "torch": {
+        "path": "torch/scene.gltf"
       }
     }
   },

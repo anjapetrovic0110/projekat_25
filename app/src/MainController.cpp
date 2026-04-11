@@ -27,6 +27,9 @@ bool MainController::loop() {
 void MainController::draw() {
     draw_statue();
     draw_hall();
+    draw_torch(glm::vec3(1.0f, -0.7f, -6.0f));
+    draw_torch(glm::vec3(-1.0f, -0.7f, -6.0f));
+    draw_torch(glm::vec3(0.0f, -0.7f, -7.0f));
 }
 
 void MainController::draw_statue() {
@@ -61,6 +64,25 @@ void MainController::draw_hall() {
     shader->set_mat4("model", model);
 
     hall->draw(shader);
+}
+
+void MainController::draw_torch(glm::vec3 position) {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+    engine::resources::Model *torch = resources->model("torch");
+    engine::resources::Shader *shader = resources->shader("basic");
+
+    shader->use();
+    shader->set_mat4("projection", graphics->projection_matrix());
+    shader->set_mat4("view", graphics->camera()->view_matrix());
+    glm::mat4 model = glm::mat4(1.0f);
+    // model = glm::translate(model, glm::vec3(1.0f, -0.65f, -6.0f));
+    model = glm::translate(model, position);
+    model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.4f));
+    shader->set_mat4("model", model);
+
+    torch->draw(shader);
 }
 
 void MainController::begin_draw() {

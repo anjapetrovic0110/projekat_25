@@ -5,6 +5,7 @@
 #ifndef MATF_RG_PROJECT_MAINCONTROLLER_H
 #define MATF_RG_PROJECT_MAINCONTROLLER_H
 #include "engine/core/Controller.hpp"
+#include "glm/vec3.hpp"
 
 namespace app {
 
@@ -18,6 +19,7 @@ class MainController : public engine::core::Controller {
     void update_camera();
     void draw_statue();
     void draw_hall();
+    void draw_torch(glm::vec3 position);
 
 
 public:
