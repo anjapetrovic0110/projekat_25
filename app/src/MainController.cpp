@@ -4,6 +4,7 @@
 
 #include "../include/MainController.h"
 
+#include "GUIController.h"
 #include "engine/graphics/GraphicsController.hpp"
 #include "engine/graphics/OpenGL.hpp"
 #include "engine/platform/Input.hpp"
@@ -12,7 +13,22 @@
 
 namespace app {
 
+class MainPlatformEventObserver : public engine::platform::PlatformEventObserver {
+public:
+    void on_mouse_move(engine::platform::MousePosition position) override;
+};
+
+void MainPlatformEventObserver::on_mouse_move(engine::platform::MousePosition position) {
+    auto gui_controller = engine::core::Controller::get<GUIController>();
+    if (!gui_controller->is_enabled()) {
+        auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+        camera->rotate_camera(position.dx * 0.6f, position.dy * 0.6f);
+    }
+}
+
 void MainController::initialize() {
+    auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+    platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
 }
 
@@ -127,6 +143,10 @@ void MainController::end_draw() {
 }
 
 void MainController::update_camera() {
+    auto gui_controller = engine::core::Controller::get<GUIController>();
+    if (gui_controller->is_enabled()) {
+        return;
+    }
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     auto camera = graphics->camera();
