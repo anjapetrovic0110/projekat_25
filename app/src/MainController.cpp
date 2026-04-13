@@ -84,6 +84,7 @@ void MainController::draw_statue() {
     shader->set_vec3("dirLight.ambient", glm::vec3(0.4f));
     shader->set_vec3("dirLight.diffuse", glm::vec3(0.3f));
     shader->set_vec3("dirLight.specular", glm::vec3(0.4f));
+    update_lights(shader);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -0.65f, -6.0f));
@@ -103,6 +104,7 @@ void MainController::draw_hall() {
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     shader->set_vec3("viewPos", graphics->camera()->Position);
+    update_lights(shader);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -1.0f, -6.0f));
@@ -123,6 +125,7 @@ void MainController::draw_torch(glm::vec3 position) {
     shader->set_mat4("view", graphics->camera()->view_matrix());
     shader->set_vec3("viewPos", graphics->camera()->Position);
     setupLights(shader);
+    update_lights(shader);
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position);
@@ -163,6 +166,49 @@ void MainController::update_camera() {
     }
     if (platform->key(engine::platform::KeyId::KEY_D).is_down()) {
         camera->move_camera(engine::graphics::Camera::Movement::RIGHT, dt);
+    }
+}
+
+void MainController::update_lights(engine::resources::Shader *shader) {
+    auto gui_controller = engine::core::Controller::get<GUIController>();
+
+    shader->set_vec3("dirLight.direction", glm::vec3(
+                                                   gui_controller->dirDirection[0],
+                                                   gui_controller->dirDirection[1],
+                                                   gui_controller->dirDirection[2]));
+    shader->set_vec3("dirLight.ambient", glm::vec3(
+                                                 gui_controller->dirAmbient[0],
+                                                 gui_controller->dirAmbient[1],
+                                                 gui_controller->dirAmbient[2]));
+    shader->set_vec3("dirLight.diffuse", glm::vec3(
+                                                 gui_controller->dirDiffuse[0],
+                                                 gui_controller->dirDiffuse[1],
+                                                 gui_controller->dirDiffuse[2]));
+    shader->set_vec3("dirLight.specular", glm::vec3(
+                                                  gui_controller->dirSpecular[0],
+                                                  gui_controller->dirSpecular[1],
+                                                  gui_controller->dirSpecular[2]));
+
+    for (int i = 0; i < 3; i++) {
+        std::string base = "pointLights[" + std::to_string(i) + "].";
+        if (!gui_controller->pointEnabled[i]) {
+            shader->set_vec3(base + "ambient", glm::vec3(0.0f));
+            shader->set_vec3(base + "diffuse", glm::vec3(0.0f));
+            shader->set_vec3(base + "specular", glm::vec3(0.0f));
+        } else {
+            shader->set_vec3(base + "ambient", glm::vec3(
+                                                       gui_controller->pointAmbient[0],
+                                                       gui_controller->pointAmbient[1],
+                                                       gui_controller->pointAmbient[2]));
+            shader->set_vec3(base + "diffuse", glm::vec3(
+                                                       gui_controller->pointDiffuse[0],
+                                                       gui_controller->pointDiffuse[1],
+                                                       gui_controller->pointDiffuse[2]));
+            shader->set_vec3(base + "specular", glm::vec3(
+                                                        gui_controller->pointSpecular[0],
+                                                        gui_controller->pointSpecular[1],
+                                                        gui_controller->pointSpecular[2]));
+        }
     }
 }
 

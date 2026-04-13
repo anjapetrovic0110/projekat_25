@@ -10,6 +10,15 @@ namespace app {
 
 class GUIController : public engine::core::Controller {
 public:
+    float dirDirection[3] = {-0.2f, -1.0f, -0.3f};
+    float dirAmbient[3] = {0.4f, 0.4f, 0.4f};
+    float dirDiffuse[3] = {0.3f, 0.3f, 0.3f};
+    float dirSpecular[3] = {0.4f, 0.4f, 0.4f};
+    float pointAmbient[3] = {0.02f, 0.01f, 0.005f};
+    float pointDiffuse[3] = {0.8f, 0.35f, 0.1f};
+    float pointSpecular[3] = {0.1f, 0.1f, 0.1f};
+    bool pointEnabled[3] = {true, true, true};
+
     std::string_view name() const override {
         return "app::GUIController";
     }

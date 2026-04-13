@@ -17,11 +17,34 @@ void GUIController::initialize() {
 void GUIController::draw() {
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     auto camera = graphics->camera();
+
     graphics->begin_gui();
 
-    ImGui::Begin("Camera info");
+    ImGui::Begin("Settings");
     ImGui::Text("Camera position: (%f, %f, %f)", camera->Position.x, camera->Position.y, camera->Position.z);
-    
+
+    ImGui::Text("\n");
+    ImGui::Text("Directional Light");
+    ImGui::SliderFloat3("Direction", dirDirection, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Ambient##dir", dirAmbient, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Diffuse##dir", dirDiffuse, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Specular##dir", dirSpecular, -1.0f, 1.0f);
+
+    ImGui::Text("\n");
+    ImGui::Text("Point Lights");
+    ImGui::SliderFloat3("Ambient##point", pointAmbient, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Diffuse##point", pointDiffuse, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Specular##point", pointSpecular, -1.0f, 1.0f);
+    for (int i = 0; i < 3; i++) {
+        std::string label = "Torch " + std::to_string(i);
+
+        if (ImGui::TreeNode(label.c_str())) {
+
+            ImGui::Checkbox("Enabled", &pointEnabled[i]);
+
+            ImGui::TreePop();
+        }
+    }
 
     ImGui::End();
 

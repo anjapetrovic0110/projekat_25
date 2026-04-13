@@ -20,6 +20,7 @@ class MainController : public engine::core::Controller {
     void end_draw() override;
     void update() override;
     void update_camera();
+    void update_lights(engine::resources::Shader *shader);
     void draw_statue();
     void draw_hall();
     void draw_torch(glm::vec3 position);
