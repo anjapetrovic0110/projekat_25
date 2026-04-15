@@ -13,6 +13,13 @@ class Shader;
 namespace app {
 
 class MainController : public engine::core::Controller {
+
+    bool event_active = false;
+    float event_timer = 0.0f;
+    bool firstEvent_active = false;
+    bool secondEvent_active = false;
+    float statue_angle = 0.0f;
+
     void initialize() override;
     bool loop() override;
     void draw() override;
@@ -20,11 +27,13 @@ class MainController : public engine::core::Controller {
     void end_draw() override;
     void update() override;
     void update_camera();
-    void update_lights(engine::resources::Shader *shader);
-    void draw_statue();
-    void draw_hall();
-    void draw_torch(glm::vec3 position);
-    void setupLights(engine::resources::Shader *shader);
+    void update_lights_gui(engine::resources::Shader *shader);
+    void update_lights_event(engine::resources::Shader *shader);
+    void update_events();
+    void draw_statue(engine::resources::Shader *shader);
+    void draw_hall(engine::resources::Shader *shader);
+    void draw_torch(engine::resources::Shader *shader, glm::vec3 position);
+    void setup_lights(engine::resources::Shader *shader);
 
 public:
     std::string_view name() const override {
