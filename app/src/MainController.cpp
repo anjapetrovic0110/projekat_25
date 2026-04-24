@@ -43,15 +43,17 @@ bool MainController::loop() {
 
 void MainController::setup_lights(engine::resources::Shader *shader) {
 
+    auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+
     shader->set_vec3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
-    shader->set_vec3("dirLight.ambient", glm::vec3(0.4f));
+    shader->set_vec3("dirLight.ambient", glm::vec3(0.1f));
     shader->set_vec3("dirLight.diffuse", glm::vec3(0.3f));
     shader->set_vec3("dirLight.specular", glm::vec3(0.4f));
 
     glm::vec3 positions[3] = {
-            glm::vec3(1.0f, -0.7f, -6.0f),
-            glm::vec3(-1.0f, -0.7f, -6.0f),
-            glm::vec3(0.0f, -0.7f, -7.0f)};
+            glm::vec3(1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.7f, 0.0f),
+            glm::vec3(-1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.7f, 0.0f),
+            glm::vec3(0.0f, -0.7f, -7.0f) + glm::vec3(0.0f, 0.7f, 0.0f)};
 
     for (int i = 0; i < 3; i++) {
         std::string base = "pointLights[" + std::to_string(i) + "].";
@@ -85,8 +87,11 @@ void MainController::draw() {
     draw_torch(shader, glm::vec3(0.0f, -0.7f, -7.0f));
 
     setup_lights(shader);
-    update_lights_gui(shader);
-    update_lights_event(shader);
+    if (event_active) {
+        update_lights_event(shader);
+    } else {
+        update_lights_gui(shader);
+    }
 }
 
 void MainController::draw_statue(engine::resources::Shader *shader) {
