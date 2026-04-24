@@ -51,9 +51,9 @@ void MainController::setup_lights(engine::resources::Shader *shader) {
     shader->set_vec3("dirLight.specular", glm::vec3(0.4f));
 
     glm::vec3 positions[3] = {
-            glm::vec3(1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.7f, 0.0f),
-            glm::vec3(-1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.7f, 0.0f),
-            glm::vec3(0.0f, -0.7f, -7.0f) + glm::vec3(0.0f, 0.7f, 0.0f)};
+            glm::vec3(1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(-1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.5f, 0.0f),
+            glm::vec3(0.0f, -0.7f, -7.0f) + glm::vec3(0.0f, 0.5f, 0.0f)};
 
     for (int i = 0; i < 3; i++) {
         std::string base = "pointLights[" + std::to_string(i) + "].";
@@ -92,6 +92,29 @@ void MainController::draw() {
     } else {
         update_lights_gui(shader);
     }
+
+    draw_flame(glm::vec3(1.0f, -0.7f, -6.0f));
+    draw_flame(glm::vec3(-1.0f, -0.7f, -6.0f));
+    draw_flame(glm::vec3(0.0f, -0.7f, -7.0f));
+}
+
+void MainController::draw_flame(glm::vec3 position) {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+    engine::resources::Model *lightBall = resources->model("light ball");
+    engine::resources::Shader *shaderLight = resources->shader("flameShader");
+
+    shaderLight->use();
+    shaderLight->set_mat4("projection", graphics->projection_matrix());
+    shaderLight->set_mat4("view", graphics->camera()->view_matrix());
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position + glm::vec3(0.0f, 0.5f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.6f));
+    shaderLight->set_mat4("model", model);
+
+    lightBall->draw(shaderLight);
 }
 
 void MainController::draw_statue(engine::resources::Shader *shader) {

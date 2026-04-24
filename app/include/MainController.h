@@ -33,6 +33,7 @@ class MainController : public engine::core::Controller {
     void draw_statue(engine::resources::Shader *shader);
     void draw_hall(engine::resources::Shader *shader);
     void draw_torch(engine::resources::Shader *shader, glm::vec3 position);
+    void draw_flame(glm::vec3 position);
     void setup_lights(engine::resources::Shader *shader);
 
 public:

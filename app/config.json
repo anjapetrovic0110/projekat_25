@@ -9,6 +9,9 @@
       },
       "torch": {
         "path": "torch/scene.gltf"
+      },
+      "light ball": {
+        "path": "light ball/scene.gltf"
       }
     }
   },
