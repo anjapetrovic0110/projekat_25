@@ -31,6 +31,7 @@ void MainController::initialize() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
+    bloom.initialize(400, 400);
 }
 
 bool MainController::loop() {
@@ -61,7 +62,7 @@ void MainController::setup_lights(engine::resources::Shader *shader) {
         shader->set_vec3(base + "position", positions[i]);
 
         shader->set_vec3(base + "ambient", glm::vec3(0.02f, 0.01f, 0.005f));
-        shader->set_vec3(base + "diffuse", glm::vec3(0.8f, 0.35f, 0.1f));
+        shader->set_vec3(base + "diffuse", glm::vec3(6.0f, 3.0f, 1.0f));
         shader->set_vec3(base + "specular", glm::vec3(0.1f));
 
         shader->set_float(base + "constant", 1.0f);
@@ -75,16 +76,12 @@ void MainController::draw() {
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     engine::resources::Shader *shader = resources->shader("basic");
 
+    bloom.begin_scene();
+
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     shader->set_vec3("viewPos", graphics->camera()->Position);
-
-    draw_statue(shader);
-    draw_hall(shader);
-    draw_torch(shader, glm::vec3(1.0f, -0.7f, -6.0f));
-    draw_torch(shader, glm::vec3(-1.0f, -0.7f, -6.0f));
-    draw_torch(shader, glm::vec3(0.0f, -0.7f, -7.0f));
 
     setup_lights(shader);
     if (event_active) {
@@ -93,9 +90,19 @@ void MainController::draw() {
         update_lights_gui(shader);
     }
 
+    draw_statue(shader);
+    draw_hall(shader);
+    draw_torch(shader, glm::vec3(1.0f, -0.7f, -6.0f));
+    draw_torch(shader, glm::vec3(-1.0f, -0.7f, -6.0f));
+    draw_torch(shader, glm::vec3(0.0f, -0.7f, -7.0f));
+
     draw_flame(glm::vec3(1.0f, -0.7f, -6.0f));
     draw_flame(glm::vec3(-1.0f, -0.7f, -6.0f));
     draw_flame(glm::vec3(0.0f, -0.7f, -7.0f));
+
+    bloom.end_scene();
+
+    bloom.render();
 }
 
 void MainController::draw_flame(glm::vec3 position) {
