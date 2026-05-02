@@ -4,7 +4,6 @@
 
 #ifndef MATF_RG_PROJECT_MAINCONTROLLER_H
 #define MATF_RG_PROJECT_MAINCONTROLLER_H
-#include "BloomRenderer.h"
 #include "engine/core/Controller.hpp"
 #include "glm/vec3.hpp"
 
@@ -20,7 +19,6 @@ class MainController : public engine::core::Controller {
     bool firstEvent_active = false;
     bool secondEvent_active = false;
     float statue_angle = 0.0f;
-    BloomRenderer bloom;
 
     void initialize() override;
     bool loop() override;

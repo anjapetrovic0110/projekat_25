@@ -10,8 +10,6 @@ add_executable(${PROJECT_NAME} ${sources} ${headers}
         include/MyApp.h
         include/MainController.h
         include/GUIController.h
-        src/BloomRenderer.cpp
-        include/BloomRenderer.h
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE matf-rg-engine)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
