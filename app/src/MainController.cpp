@@ -10,7 +10,7 @@
 #include "engine/platform/Input.hpp"
 #include "engine/platform/PlatformController.hpp"
 #include "engine/resources/ResourcesController.hpp"
-#include "spdlog/fmt/bundled/compile.h"
+
 
 namespace app {
 
@@ -31,6 +31,8 @@ void MainController::initialize() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
+    msaa.init(platform->window()->width(), platform->window()->height(), 4);
+    post.init(platform->window()->width(), platform->window()->height());
 }
 
 bool MainController::loop() {
@@ -75,16 +77,12 @@ void MainController::draw() {
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     engine::resources::Shader *shader = resources->shader("basic");
 
+    msaa.bind();
+
     shader->use();
     shader->set_mat4("projection", graphics->projection_matrix());
     shader->set_mat4("view", graphics->camera()->view_matrix());
     shader->set_vec3("viewPos", graphics->camera()->Position);
-
-    draw_statue(shader);
-    draw_hall(shader);
-    draw_torch(shader, glm::vec3(1.0f, -0.7f, -6.0f));
-    draw_torch(shader, glm::vec3(-1.0f, -0.7f, -6.0f));
-    draw_torch(shader, glm::vec3(0.0f, -0.7f, -7.0f));
 
     setup_lights(shader);
     if (event_active) {
@@ -93,9 +91,19 @@ void MainController::draw() {
         update_lights_gui(shader);
     }
 
+    draw_statue(shader);
+    draw_hall(shader);
+    draw_torch(shader, glm::vec3(1.0f, -0.7f, -6.0f));
+    draw_torch(shader, glm::vec3(-1.0f, -0.7f, -6.0f));
+    draw_torch(shader, glm::vec3(0.0f, -0.7f, -7.0f));
+
     draw_flame(glm::vec3(1.0f, -0.7f, -6.0f));
     draw_flame(glm::vec3(-1.0f, -0.7f, -6.0f));
     draw_flame(glm::vec3(0.0f, -0.7f, -7.0f));
+
+    msaa.resolve();
+
+    post.render(msaa.getTexture());
 }
 
 void MainController::draw_flame(glm::vec3 position) {

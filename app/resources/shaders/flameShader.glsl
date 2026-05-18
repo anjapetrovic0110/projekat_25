@@ -9,8 +9,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-void main()
-{
+void main() {
     TexCoords = aTex;
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
@@ -21,8 +20,7 @@ void main()
 out vec4 FragColor;
 in vec2 TexCoords;
 
-void main()
-{
+void main() {
     vec2 center = TexCoords - vec2(0.5);
     float dist = length(center);
 
