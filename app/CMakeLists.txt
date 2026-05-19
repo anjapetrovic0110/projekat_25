@@ -14,6 +14,10 @@ add_executable(${PROJECT_NAME} ${sources} ${headers}
         include/RenderTarget.h
         src/PostProcessor.cpp
         include/PostProcessor.h
+        src/Scene.cpp
+        include/Scene.h
+        src/Renderer.cpp
+        include/Renderer.h
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE matf-rg-engine)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)

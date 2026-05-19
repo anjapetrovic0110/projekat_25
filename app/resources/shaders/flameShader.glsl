@@ -17,15 +17,17 @@ void main() {
 //#shader fragment
 #version 330 core
 
-out vec4 FragColor;
 in vec2 TexCoords;
+
+out vec4 FragColor;
+
+uniform vec3 flameColor;
 
 void main() {
     vec2 center = TexCoords - vec2(0.5);
     float dist = length(center);
 
     float alpha = smoothstep(0.5, 0.1, dist);
-    vec3 color = vec3(3.0, 1.5, 0.3);
 
-    FragColor = vec4(color, alpha);
+    FragColor = vec4(flameColor, alpha);
 }
