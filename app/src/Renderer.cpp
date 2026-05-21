@@ -112,6 +112,8 @@ void Renderer::render(Scene &scene, bool event_active, bool firstEvent_active, b
     shaderLight->set_vec3("flameColor", flameColor);
     scene.draw_flames(shaderLight);
 
+    draw_skybox();
+
     if (gui_controller->msaaEnabled) {
         msaa.unbind();
         msaa.resolve();
@@ -197,6 +199,16 @@ void Renderer::update_lights(engine::resources::Shader *shader, bool event_activ
             shader->set_vec3(base + "specular", glm::vec3(0.1f));
         }
     }
+}
+
+void Renderer::draw_skybox() {
+    auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
+    auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
+
+    auto skybox = resources->skybox("space_skybox");
+    auto shader = resources->shader("skyboxShader");
+
+    graphics->draw_skybox(shader, skybox);
 }
 
 }// namespace app

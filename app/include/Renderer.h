@@ -31,6 +31,7 @@ private:
     void render_shadow_pass(Scene &scene, bool firstEvent_active, bool secondEvent_active);
     void setup_lights(engine::resources::Shader *shader);
     void update_lights(engine::resources::Shader *shader, bool event_active, bool firstEvent_active, bool secondEvent_active);
+    void draw_skybox();
 };
 
 }// namespace app
