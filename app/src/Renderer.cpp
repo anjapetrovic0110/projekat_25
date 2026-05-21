@@ -72,8 +72,12 @@ void Renderer::render(Scene &scene, bool event_active, bool firstEvent_active, b
     auto gui_controller = engine::core::Controller::get<GUIController>();
 
     render_shadow_pass(scene, firstEvent_active, secondEvent_active);
-
-    msaa.bind();
+    if (gui_controller->msaaEnabled) {
+        msaa.bind();
+    } else {
+        post.bind_plain();
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto shader = resources->shader("basic");
     shader->use();
@@ -108,9 +112,14 @@ void Renderer::render(Scene &scene, bool event_active, bool firstEvent_active, b
     shaderLight->set_vec3("flameColor", flameColor);
     scene.draw_flames(shaderLight);
 
-    msaa.unbind();
-    msaa.resolve();
-    post.render(msaa.getTexture());
+    if (gui_controller->msaaEnabled) {
+        msaa.unbind();
+        msaa.resolve();
+        post.render(msaa.getTexture());
+    } else {
+        post.unbind_plain();
+        post.render(post.getPlainTexture());
+    }
 }
 
 void Renderer::setup_lights(engine::resources::Shader *shader) {

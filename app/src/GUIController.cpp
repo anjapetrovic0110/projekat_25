@@ -45,6 +45,9 @@ void GUIController::draw() {
             ImGui::TreePop();
         }
     }
+    ImGui::Text("\n");
+    ImGui::Text("Post Processing");
+    ImGui::Checkbox("MSAA", &msaaEnabled);
 
     ImGui::End();
 

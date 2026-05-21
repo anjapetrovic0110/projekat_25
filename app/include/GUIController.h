@@ -18,6 +18,7 @@ public:
     float pointDiffuse[3] = {0.8f, 0.35f, 0.1f};
     float pointSpecular[3] = {0.1f, 0.1f, 0.1f};
     bool pointEnabled[3] = {true, true, true};
+    bool msaaEnabled = true;
 
     std::string_view name() const override {
         return "app::GUIController";
