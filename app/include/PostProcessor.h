@@ -13,12 +13,19 @@ class PostProcessor {
 public:
     void init(int width, int height);
     void render(GLuint hdrTexture);
+    void bind_plain();
+    void unbind_plain();
+    GLuint getPlainTexture() { return plainTexture; }
 
 private:
     GLuint quadVAO;
     engine::resources::Shader *shader;
     int screenWidth;
     int screenHeight;
+
+    GLuint plainFBO;
+    GLuint plainTexture;
+    void create_plainFBO();
 };
 
 }// namespace app

@@ -36,14 +36,42 @@ void PostProcessor::init(int w, int h) {
 
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     shader = resources->shader("msaaShader");
+
+    create_plainFBO();
+}
+void PostProcessor::create_plainFBO() {
+
+    glGenFramebuffers(1, &plainFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, plainFBO);
+    glGenTextures(1, &plainTexture);
+    glBindTexture(GL_TEXTURE_2D, plainTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, plainTexture, 0);
+    GLuint plainDepth;
+    glGenRenderbuffers(1, &plainDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, plainDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, plainDepth);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void PostProcessor::bind_plain() {
+    glBindFramebuffer(GL_FRAMEBUFFER, plainFBO);
+    glViewport(0, 0, screenWidth, screenHeight);
+}
+
+void PostProcessor::unbind_plain() {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
 void PostProcessor::render(GLuint hdrTexture) {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
     glViewport(0, 0, screenWidth, screenHeight);
 
     glClear(GL_COLOR_BUFFER_BIT);
+    
     shader->use();
     shader->set_int("screenTexture", 0);
     glActiveTexture(GL_TEXTURE0);
