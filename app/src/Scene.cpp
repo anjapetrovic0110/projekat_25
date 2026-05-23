@@ -8,7 +8,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace app {
-void Scene::draw_objects(engine::resources::Shader *shader, bool firstEvenet_active, bool secondEvent_active) {
+void Scene::draw_objects(engine::resources::Shader *shader, bool firstEvent_active, bool secondEvent_active) {
 
     draw_statue(shader, firstEvent_active, secondEvent_active);
     draw_hall(shader);

@@ -149,10 +149,10 @@ void Renderer::setup_lights(engine::resources::Shader *shader) {
         shader->set_float(base + "quadratic", 0.032f);
     }
 }
+
 void Renderer::update_lights(engine::resources::Shader *shader, bool event_active, bool firstEvent_active, bool secondEvent_active) {
 
     auto gui_controller = engine::core::Controller::get<GUIController>();
-
 
     shader->set_vec3("dirLight.direction", glm::vec3(
                                                    gui_controller->dirDirection[0],
@@ -194,9 +194,15 @@ void Renderer::update_lights(engine::resources::Shader *shader, bool event_activ
             shader->set_vec3(base + "diffuse", glm::vec3(0.35f, 0.05f, 0.05f));
             shader->set_vec3(base + "specular", glm::vec3(0.2f));
         } else {
-            shader->set_vec3(base + "ambient", glm::vec3(0.02f, 0.01f, 0.005f));
-            shader->set_vec3(base + "diffuse", glm::vec3(0.8f, 0.35f, 0.1f));
-            shader->set_vec3(base + "specular", glm::vec3(0.1f));
+            shader->set_vec3(base + "ambient", glm::vec3(gui_controller->pointAmbient[0],
+                                                         gui_controller->pointAmbient[1],
+                                                         gui_controller->pointAmbient[2]));
+            shader->set_vec3(base + "diffuse", glm::vec3(gui_controller->pointDiffuse[0],
+                                                         gui_controller->pointDiffuse[1],
+                                                         gui_controller->pointDiffuse[2]));
+            shader->set_vec3(base + "specular", glm::vec3(gui_controller->pointSpecular[0],
+                                                          gui_controller->pointSpecular[1],
+                                                          gui_controller->pointSpecular[2]));
         }
     }
 }
