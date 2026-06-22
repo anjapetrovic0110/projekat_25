@@ -1,6 +1,3 @@
-//
-// Created by lenovo on 12. 4. 2026..
-//
 
 #ifndef MATF_RG_PROJECT_GUICONTROLLER_H
 #define MATF_RG_PROJECT_GUICONTROLLER_H

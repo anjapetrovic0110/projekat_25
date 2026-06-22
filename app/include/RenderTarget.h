@@ -1,6 +1,3 @@
-//
-// Created by lenovo on 2. 5. 2026..
-//
 
 #ifndef MATF_RG_PROJECT_RENDERTARGET_H
 #define MATF_RG_PROJECT_RENDERTARGET_H
@@ -18,16 +15,16 @@ public:
     GLuint getTexture() const { return resolvedTexture; }
 
 private:
-    int width;
-    int height;
-    int samples;
+    int width = 0;
+    int height = 0;
+    int samples = 0;
 
-    GLuint msaaFBO;
-    GLuint colorBuffer;
-    GLuint depthBuffer;
+    GLuint msaaFBO = 0;
+    GLuint colorBuffer = 0;
+    GLuint depthBuffer = 0;
 
-    GLuint resolveFBO;
-    GLuint resolvedTexture;
+    GLuint resolveFBO = 0;
+    GLuint resolvedTexture = 0;
 };
 
 }// namespace app

@@ -1,16 +1,10 @@
-//
-// Created by lenovo on 29. 3. 2026..
-//
 
 #include "../include/MainController.h"
 
 #include "GUIController.h"
 #include "engine/graphics/GraphicsController.hpp"
 #include "engine/graphics/OpenGL.hpp"
-#include "engine/platform/Input.hpp"
 #include "engine/platform/PlatformController.hpp"
-#include "engine/resources/ResourcesController.hpp"
-
 
 namespace app {
 
@@ -32,6 +26,9 @@ void MainController::initialize() {
     platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
     renderer.init(platform->window()->width(), platform->window()->height());
+
+    auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
+    camera->Position = glm::vec3(0.0f, 0.7f, 5.0f);
 }
 
 bool MainController::loop() {
@@ -44,7 +41,7 @@ bool MainController::loop() {
 
 
 void MainController::draw() {
-    renderer.render(scene, event_active, firstEvent_active, secondEvent_active);
+    renderer.render(scene, firstEvent_active, secondEvent_active);
 }
 
 

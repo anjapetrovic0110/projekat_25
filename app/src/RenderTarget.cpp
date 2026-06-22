@@ -1,10 +1,6 @@
-//
-// Created by lenovo on 2. 5. 2026..
-//
 
-#include "RenderTarget.h"
-
-#include "../../engine/libs/glad/include/glad/glad.h"
+#include "../include/RenderTarget.h"
+#include <iostream>
 
 namespace app {
 
@@ -46,7 +42,9 @@ void MSAAFramebuffer::init(int w, int h, int s) {
                               GL_DEPTH_STENCIL_ATTACHMENT,
                               GL_RENDERBUFFER,
                               depthBuffer);
-
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "MSAA framebuffer incomplete!" << std::endl;
+    }
 
     glGenFramebuffers(1, &resolveFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, resolveFBO);

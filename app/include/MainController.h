@@ -1,15 +1,9 @@
-//
-// Created by lenovo on 29. 3. 2026..
-//
 
 #ifndef MATF_RG_PROJECT_MAINCONTROLLER_H
 #define MATF_RG_PROJECT_MAINCONTROLLER_H
 
-#include "PostProcessor.h"
-#include "RenderTarget.h"
 #include "Renderer.h"
 #include "engine/core/Controller.hpp"
-#include "glm/vec3.hpp"
 
 namespace engine::resources {
 class Shader;

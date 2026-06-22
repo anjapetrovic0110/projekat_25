@@ -1,17 +1,13 @@
-//
-// Created by lenovo on 29. 3. 2026..
-//
 
 #include "../include/MyApp.h"
-
 #include "../include/MainController.h"
 #include "GUIController.h"
 
 namespace app {
 void MyApp::app_setup() {
     auto main_controller = register_controller<app::MainController>();
-    auto gui_controler = register_controller<app::GUIController>();
+    auto gui_controller = register_controller<app::GUIController>();
     main_controller->after(engine::core::Controller::get<engine::core::EngineControllersEnd>());
-    main_controller->before(gui_controler);
+    main_controller->before(gui_controller);
 }
 }// namespace app

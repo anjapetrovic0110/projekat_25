@@ -1,6 +1,3 @@
-//
-// Created by lenovo on 21. 5. 2026..
-//
 
 #ifndef MATF_RG_PROJECT_POINTSHADOWMAP_H
 #define MATF_RG_PROJECT_POINTSHADOWMAP_H
@@ -12,9 +9,10 @@ namespace app {
 class PointShadowMap {
 
 public:
-    GLuint depthCubemap;
-    GLuint depthMapFBO;
-    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+    GLuint depthCubemap = 0;
+    GLuint depthMapFBO = 0;
+    const unsigned int SHADOW_WIDTH = 1024;
+    const unsigned int SHADOW_HEIGHT = 1024;
 
     void init();
     void bind();

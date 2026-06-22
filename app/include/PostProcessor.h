@@ -1,6 +1,3 @@
-//
-// Created by lenovo on 2. 5. 2026..
-//
 
 #ifndef MATF_RG_PROJECT_POSTPROCESSOR_H
 #define MATF_RG_PROJECT_POSTPROCESSOR_H
@@ -18,13 +15,15 @@ public:
     GLuint getPlainTexture() { return plainTexture; }
 
 private:
-    GLuint quadVAO;
+    GLuint quadVAO = 0;
+    GLuint quadVBO = 0;
     engine::resources::Shader *shader;
-    int screenWidth;
-    int screenHeight;
+    int screenWidth = 0;
+    int screenHeight = 0;
 
-    GLuint plainFBO;
-    GLuint plainTexture;
+    GLuint plainDepth = 0;
+    GLuint plainFBO = 0;
+    GLuint plainTexture = 0;
     void create_plainFBO();
 };
 

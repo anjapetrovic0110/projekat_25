@@ -1,6 +1,3 @@
-//
-// Created by lenovo on 18. 5. 2026..
-//
 
 #include "../include/Renderer.h"
 
@@ -66,7 +63,7 @@ void Renderer::render_shadow_pass(Scene &scene, bool firstEvent_active, bool sec
     glViewport(0, 0, width, height);
 }
 
-void Renderer::render(Scene &scene, bool event_active, bool firstEvent_active, bool secondEvent_active) {
+void Renderer::render(Scene &scene, bool firstEvent_active, bool secondEvent_active) {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     auto gui_controller = engine::core::Controller::get<GUIController>();
@@ -86,7 +83,7 @@ void Renderer::render(Scene &scene, bool event_active, bool firstEvent_active, b
     shader->set_vec3("viewPos", graphics->camera()->Position);
 
     setup_lights(shader);
-    update_lights(shader, event_active, firstEvent_active, secondEvent_active);
+    update_lights(shader, firstEvent_active, secondEvent_active);
 
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMaps[0].depthCubemap);
@@ -130,15 +127,10 @@ void Renderer::setup_lights(engine::resources::Shader *shader) {
     shader->set_vec3("dirLight.diffuse", glm::vec3(0.3f));
     shader->set_vec3("dirLight.specular", glm::vec3(0.4f));
 
-    glm::vec3 positions[3] = {
-            glm::vec3(1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.5f, 0.0f),
-            glm::vec3(-1.0f, -0.7f, -6.0f) + glm::vec3(0.0f, 0.5f, 0.0f),
-            glm::vec3(0.0f, -0.7f, -7.0f) + glm::vec3(0.0f, 0.5f, 0.0f)};
-
     for (int i = 0; i < 3; i++) {
         std::string base = "pointLights[" + std::to_string(i) + "].";
 
-        shader->set_vec3(base + "position", positions[i]);
+        shader->set_vec3(base + "position", lightPositions[i]);
 
         shader->set_vec3(base + "ambient", glm::vec3(0.02f, 0.01f, 0.005f));
         shader->set_vec3(base + "diffuse", glm::vec3(0.8f, 0.35f, 0.1f));
@@ -150,7 +142,7 @@ void Renderer::setup_lights(engine::resources::Shader *shader) {
     }
 }
 
-void Renderer::update_lights(engine::resources::Shader *shader, bool event_active, bool firstEvent_active, bool secondEvent_active) {
+void Renderer::update_lights(engine::resources::Shader *shader, bool firstEvent_active, bool secondEvent_active) {
 
     auto gui_controller = engine::core::Controller::get<GUIController>();
 

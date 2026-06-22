@@ -1,6 +1,3 @@
-//
-// Created by lenovo on 12. 4. 2026..
-//
 
 #include "GUIController.h"
 
@@ -23,14 +20,14 @@ void GUIController::draw() {
     ImGui::Begin("Settings");
     ImGui::Text("Camera position: (%f, %f, %f)", camera->Position.x, camera->Position.y, camera->Position.z);
 
-    ImGui::Text("\n");
+    ImGui::Spacing();
     ImGui::Text("Directional Light");
     ImGui::SliderFloat3("Direction", dirDirection, -1.0f, 1.0f);
     ImGui::SliderFloat3("Ambient##dir", dirAmbient, -1.0f, 1.0f);
     ImGui::SliderFloat3("Diffuse##dir", dirDiffuse, -1.0f, 1.0f);
     ImGui::SliderFloat3("Specular##dir", dirSpecular, -1.0f, 1.0f);
 
-    ImGui::Text("\n");
+    ImGui::Spacing();
     ImGui::Text("Point Lights");
     ImGui::SliderFloat3("Ambient##point", pointAmbient, -1.0f, 1.0f);
     ImGui::SliderFloat3("Diffuse##point", pointDiffuse, -1.0f, 1.0f);
@@ -45,7 +42,7 @@ void GUIController::draw() {
             ImGui::TreePop();
         }
     }
-    ImGui::Text("\n");
+    ImGui::Spacing();
     ImGui::Text("Post Processing");
     ImGui::Checkbox("MSAA", &msaaEnabled);
 

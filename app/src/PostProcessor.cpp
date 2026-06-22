@@ -1,10 +1,9 @@
-//
-// Created by lenovo on 2. 5. 2026..
-//
 
 #include "../include/PostProcessor.h"
 
 #include "engine/resources/ResourcesController.hpp"
+
+#include <iostream>
 
 namespace app {
 
@@ -19,13 +18,11 @@ void PostProcessor::init(int w, int h) {
             -1, 1, 0, 1,
             1, -1, 1, 0,
             1, 1, 1, 1};
-
-    GLuint VBO;
     glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &quadVBO);
 
     glBindVertexArray(quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
@@ -49,11 +46,13 @@ void PostProcessor::create_plainFBO() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, plainTexture, 0);
-    GLuint plainDepth;
     glGenRenderbuffers(1, &plainDepth);
     glBindRenderbuffer(GL_RENDERBUFFER, plainDepth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, plainDepth);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        std::cerr << "Plain framebuffer incomplete!" << std::endl;
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -71,7 +70,7 @@ void PostProcessor::render(GLuint hdrTexture) {
     glViewport(0, 0, screenWidth, screenHeight);
 
     glClear(GL_COLOR_BUFFER_BIT);
-    
+
     shader->use();
     shader->set_int("screenTexture", 0);
     glActiveTexture(GL_TEXTURE0);

@@ -1,9 +1,5 @@
-//
-// Created by lenovo on 18. 5. 2026..
-//
 
 #include "../include/Scene.h"
-
 #include "engine/resources/ResourcesController.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
