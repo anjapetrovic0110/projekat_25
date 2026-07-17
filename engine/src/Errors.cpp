@@ -1,5 +1,3 @@
-//
-
 #include <engine/util/Errors.hpp>
 #include <engine/util/Utils.hpp>
 

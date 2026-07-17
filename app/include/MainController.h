@@ -12,12 +12,12 @@ namespace app {
 
 class MainController : public engine::core::Controller {
 
-    bool event_active = false;
-    float event_timer = 0.0f;
-    bool firstEvent_active = false;
-    bool secondEvent_active = false;
-    Renderer renderer;
-    Scene scene;
+    bool m_event_active = false;
+    float m_event_timer = 0.0f;
+    bool m_first_event_active = false;
+    bool m_second_event_active = false;
+    Renderer m_renderer;
+    Scene m_scene;
 
 
     void initialize() override;
@@ -26,6 +26,7 @@ class MainController : public engine::core::Controller {
     void begin_draw() override;
     void end_draw() override;
     void update() override;
+    void terminate() override;
     void update_camera();
     void update_events();
 

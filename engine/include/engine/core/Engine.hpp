@@ -16,7 +16,10 @@
 #include <engine/platform/Window.hpp>
 
 #include <engine/graphics/Camera.hpp>
+#include <engine/graphics/MSAAFramebuffer.hpp>
 #include <engine/graphics/OpenGL.hpp>
+#include <engine/graphics/PointShadowMap.hpp>
+#include <engine/graphics/PostProcessor.hpp>
 
 #include <engine/util/ArgParser.hpp>
 #include <engine/util/Configuration.hpp>

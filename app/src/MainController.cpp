@@ -1,6 +1,4 @@
-
-#include "../include/MainController.h"
-
+#include "MainController.h"
 #include "GUIController.h"
 #include "engine/graphics/GraphicsController.hpp"
 #include "engine/graphics/OpenGL.hpp"
@@ -25,7 +23,7 @@ void MainController::initialize() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     platform->register_platform_event_observer(std::make_unique<MainPlatformEventObserver>());
     engine::graphics::OpenGL::enable_depth_testing();
-    renderer.init(platform->window()->width(), platform->window()->height());
+    m_renderer.init(platform->window()->width(), platform->window()->height());
 
     auto camera = engine::core::Controller::get<engine::graphics::GraphicsController>()->camera();
     camera->Position = glm::vec3(0.0f, 0.7f, 5.0f);
@@ -39,11 +37,9 @@ bool MainController::loop() {
     return true;
 }
 
-
 void MainController::draw() {
-    renderer.render(scene, firstEvent_active, secondEvent_active);
+    m_renderer.render(m_scene, m_first_event_active, m_second_event_active);
 }
-
 
 void MainController::begin_draw() {
     engine::graphics::OpenGL::clear_buffers();
@@ -82,37 +78,44 @@ void MainController::update_events() {
     auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
     float dt = platform->dt();
     if (platform->key(engine::platform::KeyId::KEY_E).state() == engine::platform::Key::State::JustPressed) {
-        event_active = true;
-        event_timer = 0.0f;
+        m_event_active = true;
+        m_event_timer = 0.0f;
 
-        firstEvent_active = false;
-        secondEvent_active = false;
+        m_first_event_active = false;
+        m_second_event_active = false;
     }
 
-    if (!event_active)
+    if (!m_event_active) {
         return;
-
-    event_timer += dt;
-
-    if (event_timer >= 3.0f && event_timer < 6.0f && !firstEvent_active) {
-        firstEvent_active = true;
     }
 
-    if (event_timer >= 6.0f && event_timer < 10.0f && !secondEvent_active) {
-        firstEvent_active = false;
-        secondEvent_active = true;
+    m_event_timer += dt;
+
+    if (m_event_timer >= 3.0f && m_event_timer < 6.0f && !m_first_event_active) {
+        m_first_event_active = true;
     }
 
-    if (event_timer >= 15.0f) {
-        firstEvent_active = false;
-        secondEvent_active = false;
-        event_active = false;
+    if (m_event_timer >= 6.0f && m_event_timer < 10.0f && !m_second_event_active) {
+        m_first_event_active = false;
+        m_second_event_active = true;
+    }
+
+    if (m_event_timer >= 15.0f) {
+        m_first_event_active = false;
+        m_second_event_active = false;
+        m_event_active = false;
     }
 }
 
 void MainController::update() {
+    auto platform = engine::core::Controller::get<engine::platform::PlatformController>();
+    m_renderer.resize(platform->window()->width(), platform->window()->height());
     update_camera();
     update_events();
+}
+
+void MainController::terminate() {
+    m_renderer.terminate();
 }
 
 }// namespace app

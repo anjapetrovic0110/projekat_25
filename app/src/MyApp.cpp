@@ -1,7 +1,6 @@
-
-#include "../include/MyApp.h"
-#include "../include/MainController.h"
+#include "MyApp.h"
 #include "GUIController.h"
+#include "MainController.h"
 
 namespace app {
 void MyApp::app_setup() {

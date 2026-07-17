@@ -1,80 +1,98 @@
-
-#include "../include/Renderer.h"
-
+#include "Renderer.h"
 #include "GUIController.h"
 #include "engine/core/Controller.hpp"
 #include "engine/graphics/GraphicsController.hpp"
+#include "engine/graphics/OpenGL.hpp"
 #include "engine/resources/ResourcesController.hpp"
 
 namespace app {
 void Renderer::init(int w, int h) {
-    width = w;
-    height = h;
+    m_width = w;
+    m_height = h;
 
-    msaa.init(w, h, 4);
-    post.init(w, h);
+    m_msaa.init(w, h, 4);
+    m_post.init(w, h);
 
     for (int i = 0; i < 3; i++) {
-        shadowMaps[i].init();
+        m_shadow_maps[i].init();
     }
 
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-    auto lightingShader = resources->shader("basic");
-    lightingShader->use();
-    lightingShader->set_int("shadowMap0", 3);
-    lightingShader->set_int("shadowMap1", 4);
-    lightingShader->set_int("shadowMap2", 5);
-    lightingShader->set_float("far_plane", 50.0f);
+    auto lighting_shader = resources->shader("basic");
+    lighting_shader->use();
+    lighting_shader->set_int("shadowMap0", 3);
+    lighting_shader->set_int("shadowMap1", 4);
+    lighting_shader->set_int("shadowMap2", 5);
+    lighting_shader->set_float("far_plane", 50.0f);
 }
 
-void Renderer::render_shadow_pass(Scene &scene, bool firstEvent_active, bool secondEvent_active) {
+void Renderer::resize(int width, int height) {
+    if (width <= 0 || height <= 0 || (width == m_width && height == m_height)) {
+        return;
+    }
+    m_width = width;
+    m_height = height;
+    m_msaa.resize(width, height);
+    m_post.resize(width, height);
+}
+
+void Renderer::terminate() {
+    m_msaa.terminate();
+    m_post.terminate();
+    for (auto &shadow_map: m_shadow_maps) {
+        shadow_map.terminate();
+    }
+}
+
+void Renderer::render_shadow_pass(Scene &scene, bool first_event_active, bool second_event_active) {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
-    auto depthShader = resources->shader("pointShadowDepthShader");
+    auto depth_shader = resources->shader("pointShadowDepthShader");
 
-    float farPlane = 50.0f;
-    glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, farPlane);
+    float far_plane = 50.0f;
+    glm::mat4 shadow_projection = glm::perspective(glm::radians(90.0f), 1.0f, 1.0f, far_plane);
 
-    depthShader->use();
-    depthShader->set_float("far_plane", farPlane);
+    depth_shader->use();
+    depth_shader->set_float("far_plane", far_plane);
 
     for (int i = 0; i < 3; i++) {
-        glm::vec3 lp = lightPositions[i];
+        glm::vec3 light_position = m_light_positions[i];
 
-        std::vector<glm::mat4> shadowTransforms = {
-                shadowProj * glm::lookAt(lp, lp + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
-                shadowProj * glm::lookAt(lp, lp + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
-                shadowProj * glm::lookAt(lp, lp + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
-                shadowProj * glm::lookAt(lp, lp + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
-                shadowProj * glm::lookAt(lp, lp + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
-                shadowProj * glm::lookAt(lp, lp + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)),
+        std::vector<glm::mat4> shadow_transforms = {
+                shadow_projection * glm::lookAt(light_position, light_position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
+                shadow_projection * glm::lookAt(light_position, light_position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
+                shadow_projection * glm::lookAt(light_position, light_position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
+                shadow_projection * glm::lookAt(light_position, light_position + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
+                shadow_projection * glm::lookAt(light_position, light_position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
+                shadow_projection * glm::lookAt(light_position, light_position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0)),
         };
 
-        for (int j = 0; j < 6; j++)
-            depthShader->set_mat4("shadowMatrices[" + std::to_string(j) + "]", shadowTransforms[j]);
+        for (int j = 0; j < 6; j++) {
+            depth_shader->set_mat4("shadowMatrices[" + std::to_string(j) + "]", shadow_transforms[j]);
+        }
 
-        depthShader->set_vec3("lightPos", lp);
+        depth_shader->set_vec3("lightPos", light_position);
 
-        glViewport(0, 0, 1024, 1024);
-        shadowMaps[i].bind();
-        scene.draw_objects(depthShader, firstEvent_active, secondEvent_active);
-        shadowMaps[i].unbind();
+        engine::graphics::OpenGL::set_viewport(m_shadow_maps[i].width(), m_shadow_maps[i].height());
+        m_shadow_maps[i].bind();
+        scene.draw_objects(depth_shader, first_event_active, second_event_active);
+        m_shadow_maps[i].unbind();
     }
 
-    glViewport(0, 0, width, height);
+    engine::graphics::OpenGL::set_viewport(m_width, m_height);
 }
 
-void Renderer::render(Scene &scene, bool firstEvent_active, bool secondEvent_active) {
+void Renderer::render(Scene &scene, bool first_event_active, bool second_event_active) {
     auto resources = engine::core::Controller::get<engine::resources::ResourcesController>();
     auto graphics = engine::core::Controller::get<engine::graphics::GraphicsController>();
     auto gui_controller = engine::core::Controller::get<GUIController>();
 
-    render_shadow_pass(scene, firstEvent_active, secondEvent_active);
-    if (gui_controller->msaaEnabled) {
-        msaa.bind();
+    render_shadow_pass(scene, first_event_active, second_event_active);
+    if (gui_controller->msaa_enabled) {
+        m_msaa.bind();
     } else {
-        post.bind_plain();
+        m_post.bind_plain();
     }
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    engine::graphics::OpenGL::clear_color_and_depth_buffers();
 
     auto shader = resources->shader("basic");
     shader->use();
@@ -83,41 +101,40 @@ void Renderer::render(Scene &scene, bool firstEvent_active, bool secondEvent_act
     shader->set_vec3("viewPos", graphics->camera()->Position);
 
     setup_lights(shader);
-    update_lights(shader, firstEvent_active, secondEvent_active);
+    update_lights(shader, first_event_active, second_event_active);
 
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMaps[0].depthCubemap);
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMaps[1].depthCubemap);
-    glActiveTexture(GL_TEXTURE5);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowMaps[2].depthCubemap);
+    engine::graphics::OpenGL::bind_cubemap_texture(m_shadow_maps[0].depth_cubemap(), 3);
+    engine::graphics::OpenGL::bind_cubemap_texture(m_shadow_maps[1].depth_cubemap(), 4);
+    engine::graphics::OpenGL::bind_cubemap_texture(m_shadow_maps[2].depth_cubemap(), 5);
 
-    scene.draw_objects(shader, firstEvent_active, secondEvent_active);
+    scene.draw_objects(shader, first_event_active, second_event_active);
 
-    auto shaderLight = resources->shader("flameShader");
-    shaderLight->use();
-    shaderLight->set_mat4("projection", graphics->projection_matrix());
-    shaderLight->set_mat4("view", graphics->camera()->view_matrix());
+    auto shader_light = resources->shader("flameShader");
+    shader_light->use();
+    shader_light->set_mat4("projection", graphics->projection_matrix());
+    shader_light->set_mat4("view", graphics->camera()->view_matrix());
 
-    glm::vec3 flameColor;
-    if (firstEvent_active) flameColor = glm::vec3(0.0f);
-    else if (secondEvent_active)
-        flameColor = glm::vec3(0.35f, 0.05f, 0.05f);
-    else
-        flameColor = glm::vec3(0.8f, 0.35f, 0.1f);
+    glm::vec3 flame_color;
+    if (first_event_active) {
+        flame_color = glm::vec3(0.0f);
+    } else if (second_event_active) {
+        flame_color = glm::vec3(0.35f, 0.05f, 0.05f);
+    } else {
+        flame_color = glm::vec3(0.8f, 0.35f, 0.1f);
+    }
 
-    shaderLight->set_vec3("flameColor", flameColor);
-    scene.draw_flames(shaderLight);
+    shader_light->set_vec3("flameColor", flame_color);
+    scene.draw_flames(shader_light);
 
     draw_skybox();
 
-    if (gui_controller->msaaEnabled) {
-        msaa.unbind();
-        msaa.resolve();
-        post.render(msaa.getTexture());
+    if (gui_controller->msaa_enabled) {
+        m_msaa.unbind();
+        m_msaa.resolve();
+        m_post.render(m_msaa.get_texture());
     } else {
-        post.unbind_plain();
-        post.render(post.getPlainTexture());
+        m_post.unbind_plain();
+        m_post.render(m_post.get_plain_texture());
     }
 }
 
@@ -130,7 +147,7 @@ void Renderer::setup_lights(engine::resources::Shader *shader) {
     for (int i = 0; i < 3; i++) {
         std::string base = "pointLights[" + std::to_string(i) + "].";
 
-        shader->set_vec3(base + "position", lightPositions[i]);
+        shader->set_vec3(base + "position", m_light_positions[i]);
 
         shader->set_vec3(base + "ambient", glm::vec3(0.02f, 0.01f, 0.005f));
         shader->set_vec3(base + "diffuse", glm::vec3(0.8f, 0.35f, 0.1f));
@@ -142,59 +159,59 @@ void Renderer::setup_lights(engine::resources::Shader *shader) {
     }
 }
 
-void Renderer::update_lights(engine::resources::Shader *shader, bool firstEvent_active, bool secondEvent_active) {
+void Renderer::update_lights(engine::resources::Shader *shader, bool first_event_active, bool second_event_active) {
 
     auto gui_controller = engine::core::Controller::get<GUIController>();
 
     shader->set_vec3("dirLight.direction", glm::vec3(
-                                                   gui_controller->dirDirection[0],
-                                                   gui_controller->dirDirection[1],
-                                                   gui_controller->dirDirection[2]));
+                                                   gui_controller->dir_direction[0],
+                                                   gui_controller->dir_direction[1],
+                                                   gui_controller->dir_direction[2]));
 
     shader->set_vec3("dirLight.ambient", glm::vec3(
-                                                 gui_controller->dirAmbient[0],
-                                                 gui_controller->dirAmbient[1],
-                                                 gui_controller->dirAmbient[2]));
+                                                 gui_controller->dir_ambient[0],
+                                                 gui_controller->dir_ambient[1],
+                                                 gui_controller->dir_ambient[2]));
 
     shader->set_vec3("dirLight.diffuse", glm::vec3(
-                                                 gui_controller->dirDiffuse[0],
-                                                 gui_controller->dirDiffuse[1],
-                                                 gui_controller->dirDiffuse[2]));
+                                                 gui_controller->dir_diffuse[0],
+                                                 gui_controller->dir_diffuse[1],
+                                                 gui_controller->dir_diffuse[2]));
 
     shader->set_vec3("dirLight.specular", glm::vec3(
-                                                  gui_controller->dirSpecular[0],
-                                                  gui_controller->dirSpecular[1],
-                                                  gui_controller->dirSpecular[2]));
+                                                  gui_controller->dir_specular[0],
+                                                  gui_controller->dir_specular[1],
+                                                  gui_controller->dir_specular[2]));
 
 
     for (int i = 0; i < 3; i++) {
         std::string base = "pointLights[" + std::to_string(i) + "].";
 
-        if (!gui_controller->pointEnabled[i]) {
+        if (!gui_controller->point_enabled[i]) {
             shader->set_vec3(base + "ambient", glm::vec3(0.0f));
             shader->set_vec3(base + "diffuse", glm::vec3(0.0f));
             shader->set_vec3(base + "specular", glm::vec3(0.0f));
             continue;
         }
 
-        if (firstEvent_active) {
+        if (first_event_active) {
             shader->set_vec3(base + "ambient", glm::vec3(0.0f));
             shader->set_vec3(base + "diffuse", glm::vec3(0.0f));
             shader->set_vec3(base + "specular", glm::vec3(0.0f));
-        } else if (secondEvent_active) {
+        } else if (second_event_active) {
             shader->set_vec3(base + "ambient", glm::vec3(0.08f, 0.02f, 0.02f));
             shader->set_vec3(base + "diffuse", glm::vec3(0.35f, 0.05f, 0.05f));
             shader->set_vec3(base + "specular", glm::vec3(0.2f));
         } else {
-            shader->set_vec3(base + "ambient", glm::vec3(gui_controller->pointAmbient[0],
-                                                         gui_controller->pointAmbient[1],
-                                                         gui_controller->pointAmbient[2]));
-            shader->set_vec3(base + "diffuse", glm::vec3(gui_controller->pointDiffuse[0],
-                                                         gui_controller->pointDiffuse[1],
-                                                         gui_controller->pointDiffuse[2]));
-            shader->set_vec3(base + "specular", glm::vec3(gui_controller->pointSpecular[0],
-                                                          gui_controller->pointSpecular[1],
-                                                          gui_controller->pointSpecular[2]));
+            shader->set_vec3(base + "ambient", glm::vec3(gui_controller->point_ambient[0],
+                                                         gui_controller->point_ambient[1],
+                                                         gui_controller->point_ambient[2]));
+            shader->set_vec3(base + "diffuse", glm::vec3(gui_controller->point_diffuse[0],
+                                                         gui_controller->point_diffuse[1],
+                                                         gui_controller->point_diffuse[2]));
+            shader->set_vec3(base + "specular", glm::vec3(gui_controller->point_specular[0],
+                                                          gui_controller->point_specular[1],
+                                                          gui_controller->point_specular[2]));
         }
     }
 }

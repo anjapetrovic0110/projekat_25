@@ -134,6 +134,12 @@ public:
     */
     static void clear_buffers();
 
+    static void clear_color_and_depth_buffers();
+
+    static void set_viewport(int32_t width, int32_t height);
+
+    static void bind_cubemap_texture(uint32_t texture_id, uint32_t texture_unit);
+
     /**
     * @brief Retrieve the shader compilation error log message.
     * @param shader_id Shader id for which the compilation failed.

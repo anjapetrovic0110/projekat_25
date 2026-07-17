@@ -1,6 +1,4 @@
-
 #include "GUIController.h"
-
 #include "engine/graphics/GraphicsController.hpp"
 #include "engine/platform/PlatformController.hpp"
 #include "imgui.h"
@@ -22,29 +20,29 @@ void GUIController::draw() {
 
     ImGui::Spacing();
     ImGui::Text("Directional Light");
-    ImGui::SliderFloat3("Direction", dirDirection, -1.0f, 1.0f);
-    ImGui::SliderFloat3("Ambient##dir", dirAmbient, -1.0f, 1.0f);
-    ImGui::SliderFloat3("Diffuse##dir", dirDiffuse, -1.0f, 1.0f);
-    ImGui::SliderFloat3("Specular##dir", dirSpecular, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Direction", dir_direction, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Ambient##dir", dir_ambient, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Diffuse##dir", dir_diffuse, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Specular##dir", dir_specular, -1.0f, 1.0f);
 
     ImGui::Spacing();
     ImGui::Text("Point Lights");
-    ImGui::SliderFloat3("Ambient##point", pointAmbient, -1.0f, 1.0f);
-    ImGui::SliderFloat3("Diffuse##point", pointDiffuse, -1.0f, 1.0f);
-    ImGui::SliderFloat3("Specular##point", pointSpecular, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Ambient##point", point_ambient, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Diffuse##point", point_diffuse, -1.0f, 1.0f);
+    ImGui::SliderFloat3("Specular##point", point_specular, -1.0f, 1.0f);
     for (int i = 0; i < 3; i++) {
         std::string label = "Torch " + std::to_string(i);
 
         if (ImGui::TreeNode(label.c_str())) {
 
-            ImGui::Checkbox("Enabled", &pointEnabled[i]);
+            ImGui::Checkbox("Enabled", &point_enabled[i]);
 
             ImGui::TreePop();
         }
     }
     ImGui::Spacing();
     ImGui::Text("Post Processing");
-    ImGui::Checkbox("MSAA", &msaaEnabled);
+    ImGui::Checkbox("MSAA", &msaa_enabled);
 
     ImGui::End();
 
