@@ -68,8 +68,8 @@ void MainController::draw_backpack() {
 }
 
 void MainController::draw_skybox() {
-    auto shader = engine::core::Controller::get<engine::resources::ResourcesController>()->shader("skybox");
-    auto skybox_cube = engine::core::Controller::get<engine::resources::ResourcesController>()->skybox("skybox");
+    auto shader = engine::core::Controller::get<engine::resources::ResourcesController>()->shader("skyboxes");
+    auto skybox_cube = engine::core::Controller::get<engine::resources::ResourcesController>()->skybox("skyboxes");
     engine::core::Controller::get<engine::graphics::GraphicsController>()->draw_skybox(shader, skybox_cube);
 }
 

@@ -1,7 +1,3 @@
-
-// clang-format off
-#include <glad/glad.h>
-// clang-format on
 #include <array>
 #include <engine/graphics/OpenGL.hpp>
 #include <engine/resources/Shader.hpp>
@@ -10,6 +6,7 @@
 #include <engine/util/Errors.hpp>
 #include <engine/util/Utils.hpp>
 #include <filesystem>
+#include <glad/glad.h>
 #include <stb_image.h>
 
 namespace engine::graphics {
@@ -153,7 +150,7 @@ uint32_t OpenGL::load_skybox_textures(const std::filesystem::path &path, bool fl
                             data);
         } else {
             throw util::EngineError(util::EngineError::Type::AssetLoadingError,
-                                    std::format("Failed to load skybox texture {}", path.string()));
+                                    std::format("Failed to load skyboxes texture {}", path.string()));
         }
     }
     CHECKED_GL_CALL(glTexParameteri, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -175,6 +172,19 @@ void OpenGL::disable_depth_testing() {
 
 void OpenGL::clear_buffers() {
     CHECKED_GL_CALL(glClear, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void OpenGL::clear_color_and_depth_buffers() {
+    CHECKED_GL_CALL(glClear, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void OpenGL::set_viewport(int32_t width, int32_t height) {
+    CHECKED_GL_CALL(glViewport, 0, 0, width, height);
+}
+
+void OpenGL::bind_cubemap_texture(uint32_t texture_id, uint32_t texture_unit) {
+    CHECKED_GL_CALL(glActiveTexture, GL_TEXTURE0 + texture_unit);
+    CHECKED_GL_CALL(glBindTexture, GL_TEXTURE_CUBE_MAP, texture_id);
 }
 
 uint32_t face_index(std::string_view name) {

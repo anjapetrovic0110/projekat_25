@@ -1,11 +1,23 @@
 {
   "resources": {
     "models": {
+      "statue": {
+        "path": "statue/google poly vang.obj"
+      },
+      "hall": {
+        "path": "hall/hall.gltf"
+      },
+      "torch": {
+        "path": "torch/scene.gltf"
+      },
+      "light ball": {
+        "path": "light ball/scene.gltf"
+      }
     }
   },
   "window": {
-    "height": 600,
-    "title": "Hello, window!",
-    "width": 800
+    "height": 1080,
+    "title": "Shadow Hall",
+    "width": 1920
   }
 }
