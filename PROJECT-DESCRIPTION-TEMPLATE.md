@@ -3,8 +3,8 @@
 168/2022 - Anja Petrović
 
 Shadow Hall is an interactive 3D scene containing a statue inside a hall illuminated by three torches and directional
-lighting. The application demonstrates multiple lighting types, point shadows, off-screen MSAA, framebuffer rendering, a
-skybox, and an event-driven animation sequence.
+lighting. The application demonstrates multiple lighting types, point shadows, off-screen MSAA, a skybox, and an
+event-driven animation sequence.
 
 ## Controls
 
@@ -21,28 +21,28 @@ skybox, and an event-driven animation sequence.
 
 ### Fundamental:
 
-[x] Model with lighting
-[x] Directional and point lighting with customizable colors and directional-light direction through the GUI
-[x] E -> After 3 seconds, the torch lights turn off and the statue starts rotating -> After another 3 seconds, the torch
-lights become red -> After another 9 seconds, the scene returns to its initial state
+- [x] Model with lighting
+- [x] Directional and point lighting with customizable colors and directional-light direction through the GUI
+- [x] E -> After 3 seconds, the torch lights turn off and the statue starts rotating -> After another 3 seconds, the
+  torch lights become red -> After another 9 seconds, the scene returns to its initial state
 
 ### Group A:
 
-[ ] Frame-buffers with post-processing   
-[x] Off-screen Anti-Aliasing
-[ ] Parallax Mapping
-[ ] Bloom with the use of HDR
+- [ ] Frame-buffers with post-processing
+- [x] Off-screen Anti-Aliasing
+- [ ] Parallax Mapping
+- [ ] Bloom with the use of HDR
 
 ### Group B:
 
-[ ] Deferred Shading  
-[x] Point Shadows
-[ ] SSAO
+- [ ] Deferred Shading
+- [x] Point Shadows
+- [ ] SSAO
 
 ### Engine improvement:
 
-[x] Off-screen Anti-Aliasing implemented as a reusable `engine::graphics` component
-[x] Point Shadows implemented as a reusable `engine::graphics` component
+- [x] Off-screen Anti-Aliasing implemented as a reusable `engine::graphics` component
+- [x] Point Shadows implemented as a reusable `engine::graphics` component
 
 ## Models:
 
